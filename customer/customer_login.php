@@ -35,19 +35,29 @@ if (isset($_POST['login'])) {
 	$select_cart="select * from cart where ip_add='$get_ip'";
 	$run_cart=mysqli_query($con, $select_cart);
 	$check_cart=mysqli_num_rows($run_cart);
-	if ($check_customer==0) {
-		echo "<script>alert('Password/Email Wrong')</script>";
-		exit();
-	}
-	if ($check_customer==1 AND $check_cart==0) {
-		$_SESSION['customer_email']=$customer_email;
-		echo "<script>alert('You are logged In')</script>";
-		echo "<script>window.open('customer/my_account.php','_self')</script>";
-	}else{
-		$_SESSION['customer_email']=$customer_email;
-		echo "<script>alert('You are logged In')</script>";
-		echo "<script>window.open('checkout.php','_self')</script>";
+	if ($check_customer==0) {																		
+		echo "<script>alert('Password/Email Wrong')</script>";										
+		exit();																						
+	}																																														
+	else {	
+		$row = mysqli_fetch_array($run_cust, MYSQLI_ASSOC);							
+		$hashedPassword = $row['customer_pass'];	
+		
+		if(!password_verify($customer_pass, $hashedPassword)){
+			echo "<script>alert('Invalid Password')</script>";	
+			exit();
+		}
+		else{
+			if ($check_customer==1 AND $check_cart==0) {												
+				$_SESSION['customer_email']=$customer_email;											
+				echo "<script>alert('You are logged In')</script>";										
+				echo "<script>window.open('customer/my_account.php','_self')</script>";					
+			} else{																						
+				$_SESSION['customer_email']=$customer_email;											
+				echo "<script>alert('You are logged In')</script>";										
+				echo "<script>window.open('checkout.php','_self')</script>";							
+			}
+		}																							
 	}
 }
-
-  ?>
+?>
